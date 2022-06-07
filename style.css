@@ -1,0 +1,27 @@
+.barraBusqueda {
+margin: auto;
+}
+.carousel-inner {
+
+    height: 700px;
+   
+}
+
+.carousel-inner .carousel-item img {
+    height: 20%;
+}
+
+#botonCrear {
+    width: 100%;
+    background-color: orange;
+}
+
+#botonSugerencia {
+    width: 100%;
+    background-color: orange;
+}
+
+#resultado {
+    background-color: white;
+}
+

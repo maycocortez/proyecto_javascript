@@ -1,0 +1,10 @@
+[
+
+{"id":0,"nombre":"Dua lipa","album":"future nostalgia","formato":"cd","cantidad":1,"precio":1500,"stock":1,"img":"images/dualipa.jpg"},
+{"id":1,"nombre":"Wos","album":"oscuro extasis","formato":"digital","cantidad":1,"precio":1200,"stock":1,"img":"images/wos.jpg"},
+{"id":2,"nombre":"Metallica","album":"hardwired to self destruct","formato":"vinilo","cantidad":1,"precio":4000,"stock":1,"img":"images/metallica.jpg"},
+{"id":3,"nombre":"Linkin Park","album":"hybrid theory","formato":"vinilo","cantidad":1,"precio":1500,"stock":1,"img":"images/linkinpark.jpg"},
+{"id":4,"nombre":"Los Palmeras","album":"sean eternos los palmeras","formato":"cd","cantidad":1,"precio":1300,"stock":1,"img":"images/lospalmeras.jpg"},
+{"id":5,"nombre":"Billie Eilish","album":"happier than ever","formato":"digital","cantidad":1,"precio":1100,"stock":1,"img":"images/billieeilish.jpg"}
+]
+
