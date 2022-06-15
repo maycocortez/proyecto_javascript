@@ -1,19 +1,6 @@
-
-//Fetch
-async function traerProductosJson() {
-  const response = await fetch("productos.json");
-  return await response.json();
-}
-
-
-
-//ARRAYS
-
-
-
-let carrito = JSON.parse(localStorage.getItem("artistaCarrito")) ?? []
+//Arrays
+let carrito = []
 let sugerenciaUsuario = []
-let productos = []
 
 
 
@@ -22,72 +9,173 @@ let productos = []
 let botonSugerencia = document.getElementById("botonSugerencia")
 let divProductos = document.getElementById("divProductos")
 let formulario = document.getElementById("formulario")
-const recuadroProductos = document.querySelector("#recuadroProductos");
+const total = document.getElementById("eliminarTotal")
+const botonDinamico = document.querySelectorAll(".boton")
+let modal = document.querySelector(".modalCarrito")
+
+//Selecciono cada producto de la lista
+botonDinamico.forEach(btn => {
+btn.addEventListener("click", (e) => {
 
 
-fetch("productos.json")
-  .then((response) => response.json())
-.then((data) => {
-data.forEach( (artista)=> { 
 
-  const {nombre,album,formato,precio,id,img} = artista
-recuadroProductos.innerHTML += `
+  const button = e.target
+  console.log(button)
+  const item = button.closest(".card")
+  const itemTitle = item.querySelector(".card-title").textContent
+  const itemImg = item.querySelector(".imagen").src 
+  const itemAlbum = item.querySelector(".card-subtitle").textContent
+  const itemPrice = item.querySelector(".precio").textContent
 
-    <div class="col-sm-12 col-md-6 col-xl-4 text-center p-5">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">${nombre}</h5>
-          <h6 class="card-subtitle text-muted">${album}</h6>
-        </div>
-          <img src="${img}" alt="">
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">${album}</li>
-          <li class="list-group-item">${formato}</li>
-          <li class="list-group-item">${precio}</li>
-        </ul>
-        <div class="card-body">
-          <button class="btn btn-dark boton1" id="boton${id}">Añadir al carrito</button>
-        </div>
-      </div>
 
-`
 
-})
-
-////// ESTO ES LO QUE NO ME SALE//////////////////////////
-let btns = document.querySelectorAll(".boton1")
-btns.forEach((e) =>
-e.addEventListener("click",() =>{
-
-  
-  const dataGuardada = data.find((artista) => artista.id === this.id);
-  
-  console.log(dataGuardada)
+  const newItem = {
+    title : itemTitle,
+    img : itemImg,
+    album: itemAlbum,
+    precio : itemPrice,
+   cantidad :1
 
     
-    localStorage.setItem("artistaCarrito", JSON.stringify(carrito))
-    //TOASTIFY
-    Toastify({
-      text: "Añadido al carrito!",
-      duration: 3000,
-      close: true,
-      gravity: "top", // 
-      position: "right",
-      stopOnFocus: true, 
-      style: {
-        background: "linear-gradient(to right, #00b09b, #96c93d)",
-      },
-   
-    }).showToast();
+  }
 
+  Toastify({
+    text: "Añadido al carrito!",
+    duration: 3000,
+    close: true,
+    gravity: "top", // 
+    position: "right",
+    stopOnFocus: true, 
+    style: {
+      background: "linear-gradient(to right, #00b09b, #96c93d)",
+    },
+  
+  }).showToast();
  
-}))
+
+
+  for(let i =0; i < carrito.length ; i++){
+    if(carrito[i].title.trim() === newItem.title.trim()){
+   
+      CarritoTotal()
+    return null}
+
+    }
+
+  carrito.push(newItem)
+
+enviarAModal()
+
+})
 })
 
-//////////////////////////////////////////////////
 
 
-//EVENTOS
+
+//Envio el producto seleccionado al modal
+const enviarAModal = () => {
+
+
+  modal.innerHTML= ``
+ 
+  carrito.map(item => {
+    const tr = document.createElement('div')
+    tr.classList.add('ItemCarrito')
+    const Content = 
+    `
+  
+  <img src="${item.img}" height="50px" width="50px" >
+ <p class ="title"> ${item.title}  </p>
+  -  ${item.album}
+  <p class ="table__price">- $${item.precio}</p>
+    
+    
+<button class="delete btn btn-dark">x</button>
+    
+  
+
+    <br>
+    `
+    tr.innerHTML = Content;
+    modal.append(tr)
+
+    tr.querySelector(".delete").addEventListener('click', removeItemCarrito)
+
+  })
+  CarritoTotal()
+}
+
+
+//Imprimo en el modal el total de la compra
+function CarritoTotal(){
+  let Total = 0;
+  const itemCartTotal = document.querySelector('.itemCartTotal')
+  carrito.forEach((item) => {
+    const precio = Number(item.precio.replace("$", ''))
+    Total = Total + precio*item.cantidad
+  })
+
+  itemCartTotal.innerHTML = `Total $${Total}`
+  addLocalStorage()
+}
+
+//Elimino de manera individual un producto del carrito
+function removeItemCarrito(e){
+  const buttonDelete = e.target
+  const tr = buttonDelete.closest(".ItemCarrito")
+  const title = tr.querySelector('.title').textContent;
+  for(let i=0; i<carrito.length ; i++){
+
+    if(carrito[i].title.trim() === title.trim()){
+      carrito.splice(i, 1)
+    }
+  }
+
+  tr.remove()
+  CarritoTotal()
+}
+
+
+
+
+
+//Guardo en localStorage
+function addLocalStorage(){
+  localStorage.setItem('carrito', JSON.stringify(carrito))
+}
+
+window.onload = function(){
+  const storage = JSON.parse(localStorage.getItem('carrito'));
+  if(storage){
+    carrito = storage;
+    enviarAModal()
+  }
+}
+
+//Creo una funcion para eliminar los productos del carrito 
+const vaciarCarrito = document.getElementById("vaciarCarrito")
+vaciarCarrito.addEventListener("click", ()=> {
+
+  carrito = []
+  modal.innerHTML = ""
+  total.innerHTML= ""
+  localStorage.setItem("carrito",JSON.stringify(carrito))
+})
+
+//Finalizo la compra
+const finalizarCompra = document.getElementById("finalizarCompra")
+finalizarCompra.addEventListener("click", ()=> {
+  modal.innerHTML = ""
+  total.innerHTML= ""
+  Swal.fire(
+    'Compra finalizada',
+    'En minutos te llegara un mail con los detalles del envio',
+    'success'
+  )
+
+} )
+
+//Obtengo los datos del formulario y los imprimo en el html
 
 formulario.addEventListener("submit", (e) => {
     e.preventDefault()
@@ -123,10 +211,14 @@ let buscador = document.getElementById("buscador")
 let botonBuscador = document.getElementById("botonBuscador")
 let resultado = document.getElementById("resultado")
 
+
+
+//Creo un buscador utilizando FETCH desde un archivo JSON
 const barraBuscador = ()=> {
   resultado.innerHTML = ""
 
  const texto = buscador.value.toLowerCase();
+
  fetch('productos.json')
 .then(response => response.json())
 .then(data => {
@@ -134,18 +226,26 @@ data.forEach( artista => {
 let nombre = artista.nombre.toLowerCase();
 if(nombre.indexOf(texto) !== -1) {
 resultado.innerHTML += `
-<li> <img src="${artista.img}" height="50px" width="50px" >
-Nombre: ${artista.nombre} 
-- Album: ${artista.album}
-- Precio: ${artista.precio}
-- Formato: ${artista.formato}
+<li> <a href="${artista.url}" target="_blank" style="text-decoration: none;">
+<img src="${artista.img}" height="20px" width="20px" >
+${artista.nombre} - 
+${artista.album}
+
+
+
+
+</a>
 
 
 </li>
 
+
 `
+
 }
-})
+}
+
+)
 if(resultado.innerHTML === ''){
    resultado.innerHTML += `
    <li> No se encontro el producto</li>
@@ -155,7 +255,12 @@ if(resultado.innerHTML === ''){
 }
 )}
 
+
+
+
+
+
 botonBuscador.addEventListener("click",barraBuscador)
-buscador.addEventListener("change",barraBuscador)
+buscador.addEventListener("keyup",barraBuscador)
 
 

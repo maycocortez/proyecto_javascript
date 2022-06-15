@@ -25,3 +25,12 @@ margin: auto;
     background-color: white;
 }
 
+#busqueda1 {
+    margin: 40px 0 0 400px;
+
+    width: 100vh;
+    height: 70vh;    
+    border: solid 10px black;
+    
+}
+
